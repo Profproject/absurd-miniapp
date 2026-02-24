@@ -26,12 +26,14 @@ function clickSound() {
   try { c.currentTime = 0; c.volume = 0.7; c.play(); } catch {}
 }
 
-function ensureBgAudioOnce() {
+let audioStarted = false;
+
+function startBgIfNeeded() {
+  if (audioStarted) return;
+  audioStarted = true;
   const bg = document.getElementById('bg');
-  try { bg.volume = 0.25; bg.play(); } catch {}
-  window.removeEventListener('pointerdown', ensureBgAudioOnce);
+  try { bg.volume = 0.22; bg.play(); } catch {}
 }
-window.addEventListener('pointerdown', ensureBgAudioOnce, { once: true });
 
 function renderLoading() {
   app.innerHTML = `
@@ -83,9 +85,9 @@ function renderHome() {
     </div>
   `;
 
-  document.getElementById('how').onclick = () => { clickSound(); openHow(); };
-  document.getElementById('upload').onclick = () => { clickSound(); startPayment(); };
-  document.getElementById('invite').onclick = () => { clickSound(); openInvite(); };
+  document.getElementById('how').onclick = () => { startBgIfNeeded(); clickSound(); openHow(); };
+  document.getElementById('upload').onclick = () => { startBgIfNeeded(); clickSound(); startPayment(); };
+  document.getElementById('invite').onclick = () => { startBgIfNeeded(); clickSound(); openInvite(); };
   const useFree = document.getElementById('useFree');
   if (useFree) useFree.onclick = () => { clickSound(); state.useFree = true; openForm(); };
 }
@@ -227,4 +229,5 @@ setTimeout(async () => {
   try { await loadMe(); } catch (e) {}
   renderHome();
 }, 650);
+
 
