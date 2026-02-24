@@ -221,8 +221,10 @@ function openForm() {
 // boot
 try { tg?.ready?.(); tg?.expand?.(); } catch {}
 renderLoading();
-setTimeout(async () => {
-  await loadMe();
-  renderHome();
 
-}, 900);
+// Переходим на главную ВСЕГДА, даже если бэкенд недоступен
+setTimeout(async () => {
+  try { await loadMe(); } catch (e) {}
+  renderHome();
+}, 650);
+
