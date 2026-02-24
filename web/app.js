@@ -1,5 +1,5 @@
 // 1) ВПИШИ backend URL после деплоя (Render выдаст домен)
-const API_BASE = "https://YOUR_BACKEND_DOMAIN";
+const API_BASE = "https://absurd-miniapp-1.onrender.com";
 
 const app = document.getElementById('app');
 const tg = window.Telegram?.WebApp;
@@ -224,4 +224,5 @@ renderLoading();
 setTimeout(async () => {
   await loadMe();
   renderHome();
+
 }, 900);
