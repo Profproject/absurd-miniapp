@@ -86,7 +86,7 @@ function renderHome() {
   app.innerHTML = `
     <div class="wrap">
       <div class="card">
-        <div class="big">НЕАДЕКВАТНЫЙ КОНКУРС</div>
+        <div class="big big3d">Преврати свой безумный абсурд в TON</div>
 
         <div class="sub">
           Подробности — ниже.
@@ -300,6 +300,7 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 650);
+
 
 
 
