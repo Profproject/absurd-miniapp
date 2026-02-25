@@ -1,5 +1,8 @@
-// 1) ВПИШИ backend URL после деплоя (Render выдаст домен)
-const API_BASE = "https://absurd-miniapp-1.onrender.com";
+// ====== CONFIG (EDIT THESE 3) ======
+const API_BASE = "https://absurd-miniapp.onrender.com"; // <- твой backend
+const BOT_USERNAME = "YOUR_BOT_USERNAME";              // без @
+const MINIAPP_SHORTNAME = "absurd";                    // short name mini app в BotFather
+// ===================================
 
 const app = document.getElementById('app');
 const tg = window.Telegram?.WebApp;
@@ -10,6 +13,7 @@ function getUserId() {
 }
 
 function getStartParam() {
+  // ref via startapp
   return tg?.initDataUnsafe?.start_param || "";
 }
 
@@ -18,21 +22,38 @@ const state = {
   startParam: getStartParam(),
   freeUploads: 0,
   invoiceId: null,
-  useFree: false
+  useFree: false,
+  audioStarted: false
 };
+
+function startBgIfNeeded() {
+  if (state.audioStarted) return;
+  state.audioStarted = true;
+  const bg = document.getElementById('bg');
+  try { bg.volume = 0.22; bg.play(); } catch {}
+}
 
 function clickSound() {
   const c = document.getElementById('click');
-  try { c.currentTime = 0; c.volume = 0.7; c.play(); } catch {}
+  try {
+    c.pause();
+    c.currentTime = 0;
+    c.volume = 0.9;
+    const p = c.play();
+    if (p?.catch) p.catch(() => {});
+  } catch {}
 }
 
-let audioStarted = false;
+function safeOpen(url) {
+  // inside Telegram: use tg.openLink to avoid blocked popup
+  if (tg?.openLink) tg.openLink(url);
+  else window.open(url, "_blank");
+}
 
-function startBgIfNeeded() {
-  if (audioStarted) return;
-  audioStarted = true;
-  const bg = document.getElementById('bg');
-  try { bg.volume = 0.22; bg.play(); } catch {}
+function safeOpenTelegram(url) {
+  if (tg?.openTelegramLink) tg.openTelegramLink(url);
+  else if (tg?.openLink) tg.openLink(url);
+  else window.location.href = url;
 }
 
 function renderLoading() {
@@ -40,11 +61,20 @@ function renderLoading() {
     <div class="wrap">
       <div class="card">
         <div class="big">ЗАГРУЖАЕМ ГАЛЕРЕЮ АБСУРДА…</div>
-        <div class="sub">Честно. Прозрачно. Победитель — каждое воскресенье.</div>
-        <div class="sub" style="color:rgba(190,120,255,.85)">Нажми в любом месте, чтобы включить звук.</div>
+        <div class="sub">Загружай изображения — получай шанс на награду.</div>
+        <div class="sub2">Подробности — ниже.</div>
       </div>
     </div>
   `;
+}
+
+function attachPressFX() {
+  document.querySelectorAll('.btn').forEach((b) => {
+    b.addEventListener('pointerdown', () => b.classList.add('isDown'));
+    b.addEventListener('pointerup', () => b.classList.remove('isDown'));
+    b.addEventListener('pointercancel', () => b.classList.remove('isDown'));
+    b.addEventListener('pointerleave', () => b.classList.remove('isDown'));
+  });
 }
 
 function renderHome() {
@@ -53,9 +83,8 @@ function renderHome() {
       <div class="card">
         <div class="big">НЕАДЕКВАТНЫЙ КОНКУРС</div>
 
-        <div class="intro">
-          Загрузи гениально-абсурдную картинку. Если рассмешишь нас — победишь и получишь <b>100 TON</b>.
-          Детали — ниже.
+        <div class="sub">
+          Подробности — ниже.
         </div>
 
         <div class="arrows"><span>⬇</span><span>⬇</span><span>⬇</span></div>
@@ -68,9 +97,9 @@ function renderHome() {
 
         <div class="under">
           <div class="free">
-            <b>Бесплатные загрузки:</b> ${state.freeUploads}
+            Бесплатные загрузки: ${state.freeUploads}
             ${state.freeUploads > 0 ? `<a id="useFree">использовать 1 бесплатно</a>` : ``}
-            <div style="margin-top:6px;color:rgba(255,255,255,.72);font-weight:900">
+            <div style="margin-top:8px;color:rgba(255,255,255,.72);font-weight:900">
               3 оплаты рефералов = 1 бесплатная загрузка
             </div>
           </div>
@@ -78,18 +107,21 @@ function renderHome() {
           <div class="winner">
             <div class="winnerTitle">Победитель недели</div>
             <div class="winnerBox">?</div>
-            <div class="winnerHint">Каждое воскресенье здесь появляется победитель и получает 100 TON.</div>
+            <div class="winnerHint">Каждое воскресенье мы выбираем 1 победителя и отправляем 100 TON на его кошелёк.</div>
           </div>
         </div>
       </div>
     </div>
   `;
 
+  attachPressFX();
+
   document.getElementById('how').onclick = () => { startBgIfNeeded(); clickSound(); openHow(); };
   document.getElementById('upload').onclick = () => { startBgIfNeeded(); clickSound(); startPayment(); };
   document.getElementById('invite').onclick = () => { startBgIfNeeded(); clickSound(); openInvite(); };
+
   const useFree = document.getElementById('useFree');
-  if (useFree) useFree.onclick = () => { clickSound(); state.useFree = true; openForm(); };
+  if (useFree) useFree.onclick = () => { startBgIfNeeded(); clickSound(); state.useFree = true; openForm(); };
 }
 
 function openModal(innerHtml) {
@@ -102,39 +134,30 @@ function openModal(innerHtml) {
     </div>
   `;
   document.body.appendChild(wrap);
+
   wrap.querySelector('#x').onclick = () => { clickSound(); wrap.remove(); };
   wrap.onclick = (e) => { if (e.target === wrap) { clickSound(); wrap.remove(); } };
+
   return wrap;
 }
 
 function openHow() {
   openModal(`
     <h2>Как это работает</h2>
-    <p><b>1)</b> Нажми «Загрузить изображение» → оплата <b>1 TON</b> через Crypto Pay.</p>
-    <p><b>2)</b> После оплаты откроется форма: <b>кошелёк</b>, <b>название</b>, <b>файл</b>.</p>
-    <p><b>3)</b> Можно: рисунок, фото, фотошоп, мем-арт, ИИ — всё подходит. Важен эффект.</p>
-    <p><b>4)</b> Победителя выбирает <b>жюри</b>. Лайков нет — накрутки нет.</p>
-    <p><b>5)</b> В воскресенье мы объявляем <b>1 победителя</b> недели и отправляем <b>100 TON</b> на ваш кошелёк.</p>
-    <p><b>Прозрачность:</b> проект живёт на комиссии с входных взносов. Это конкурс, не инвестиции.</p>
-    <p><b>Ранний этап:</b> сейчас участников мало — шанс победить выше.</p>
-  `);
-}
 
-function openInvite() {
-  const ref = `ref_${state.userId}`;
-  openModal(`
-    <h2>Пригласить друга</h2>
-    <p>Отправь другу ссылку на мини-апп с твоим кодом.</p>
-    <p><b>Награда:</b> 3 оплаты рефералов = 1 бесплатная загрузка.</p>
-    <div class="warn" style="border-color:rgba(190,120,255,.55);background:rgba(190,120,255,.08);color:rgba(240,230,255,.95)">
-      Твой код: <b>${ref}</b><br/>
-      (ссылку вставим после привязки mini-app в BotFather)
-    </div>
+    <p>😈 <b>1)</b> Нажми «Загрузить изображение» → оплата <b>1 TON</b> через Crypto Pay.</p>
+    <p>🧩 <b>2)</b> После оплаты появится форма: <b>кошелёк</b>, <b>название</b>, <b>файл</b> → «Отправить».</p>
+    <p>🎭 <b>3)</b> Можно: рисунок, фото, фотошоп, мем-арт, ИИ — всё подходит. Важен эффект.</p>
+    <p>👑 <b>4)</b> Победителя выбирает <b>жюри</b>. Лайков нет — накрутки нет.</p>
+    <p>💸 <b>5)</b> В воскресенье мы объявляем <b>1 победителя</b> и отправляем <b>100 TON</b> на указанный кошелёк.</p>
+
+    <p style="opacity:.9"><b>Прозрачность:</b> проект живёт на комиссии с входных взносов. Это конкурс, не инвестиции.</p>
+    <p style="opacity:.9"><b>Ранний этап:</b> сейчас участников мало — шанс победить выше.</p>
   `);
 }
 
 async function loadMe() {
-  if (state.userId === "0") return;
+  if (state.userId === "0") { state.freeUploads = 0; return; }
   const r = await fetch(`${API_BASE}/api/me?user_id=${encodeURIComponent(state.userId)}`);
   const j = await r.json();
   if (j?.ok) state.freeUploads = j.free_uploads || 0;
@@ -142,37 +165,46 @@ async function loadMe() {
 
 async function startPayment() {
   state.useFree = false;
+  state.invoiceId = null;
+
   const r = await fetch(`${API_BASE}/api/create-invoice`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user_id: state.userId, start_param: state.startParam })
   });
+
   const j = await r.json();
-  if (!j?.ok) return;
+  if (!j?.ok || !j.pay_url) {
+    openModal(`<h2>Ошибка</h2><p>Не удалось создать оплату. Попробуй ещё раз.</p>`);
+    return;
+  }
 
   state.invoiceId = j.invoice_id;
 
-  // редирект на Crypto Pay
-  window.open(j.pay_url, "_blank");
+  // open Crypto Pay inside Telegram
+  safeOpen(j.pay_url);
 
-  // ждём оплату (poll)
+  // wait payment (poll)
   const started = Date.now();
   const timer = setInterval(async () => {
-    const s = await fetch(`${API_BASE}/api/invoice-status?invoice_id=${encodeURIComponent(state.invoiceId)}`);
-    const sj = await s.json();
-    if (sj?.status === "paid") {
-      clearInterval(timer);
-      openForm();
-    }
-    if (Date.now() - started > 10 * 60 * 1000) clearInterval(timer);
+    try {
+      const s = await fetch(`${API_BASE}/api/invoice-status?invoice_id=${encodeURIComponent(state.invoiceId)}`);
+      const sj = await s.json();
+      if (sj?.status === "paid") {
+        clearInterval(timer);
+        openForm();
+      }
+      if (Date.now() - started > 10 * 60 * 1000) clearInterval(timer);
+    } catch (e) {}
   }, 2000);
 }
 
 function openForm() {
   const modal = openModal(`
     <h2>Отправка работы</h2>
+
     <div class="warn">
-      ВНИМАНИЕ: если ваш кошелёк содержит <b>MEMO/Комментарий</b> — обязательно укажите его.
+      ⚠️ ВНИМАНИЕ: если ваш кошелёк содержит <b>MEMO/Комментарий</b> — обязательно укажите его.<br/>
       Иначе вы можете потерять еженедельную награду!!!
     </div>
 
@@ -185,13 +217,23 @@ function openForm() {
     <label>Файл изображения</label>
     <input id="file" type="file" accept="image/*" />
 
-    <div style="margin-top:14px">
+    <div class="row">
       <button class="btn" id="send"><span class="face">Отправить</span></button>
     </div>
   `);
 
+  // press fx for send button too
+  modal.querySelectorAll('.btn').forEach((b) => {
+    b.addEventListener('pointerdown', () => b.classList.add('isDown'));
+    b.addEventListener('pointerup', () => b.classList.remove('isDown'));
+    b.addEventListener('pointercancel', () => b.classList.remove('isDown'));
+    b.addEventListener('pointerleave', () => b.classList.remove('isDown'));
+  });
+
   modal.querySelector('#send').onclick = async () => {
+    startBgIfNeeded();
     clickSound();
+
     const wallet = modal.querySelector('#wallet').value.trim();
     const title = modal.querySelector('#title').value.trim();
     const file = modal.querySelector('#file').files?.[0];
@@ -212,22 +254,40 @@ function openForm() {
 
     const r = await fetch(`${API_BASE}/api/submit`, { method: 'POST', body: fd });
     const j = await r.json();
+
     if (j?.ok) {
       modal.remove();
-      await loadMe();
+      try { await loadMe(); } catch {}
       renderHome();
+    } else {
+      openModal(`<h2>Ошибка</h2><p>Не удалось отправить. Проверь оплату/файл и попробуй снова.</p>`);
     }
   };
 }
 
-// boot
+function openInvite() {
+  const ref = `ref_${state.userId}`;
+
+  // link to mini app with referral
+  const miniAppLink = `https://t.me/${BOT_USERNAME}/${MINIAPP_SHORTNAME}?startapp=${encodeURIComponent(ref)}`;
+
+  const text =
+    `😈 НЕАДЕКВАТНЫЙ КОНКУРС\n` +
+    `Загрузи абсурд — получи шанс на 100 TON в воскресенье.\n\n` +
+    `Мой код: ${ref}`;
+
+  const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(miniAppLink)}&text=${encodeURIComponent(text)}`;
+
+  safeOpenTelegram(shareUrl);
+}
+
+// BOOT
 try { tg?.ready?.(); tg?.expand?.(); } catch {}
+
 renderLoading();
 
-// Переходим на главную ВСЕГДА, даже если бэкенд недоступен
+// ALWAYS go to home quickly (never stuck on loading)
 setTimeout(async () => {
-  try { await loadMe(); } catch (e) {}
+  try { await loadMe(); } catch {}
   renderHome();
 }, 650);
-
-
