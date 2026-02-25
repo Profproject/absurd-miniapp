@@ -91,7 +91,11 @@ function renderHome() {
 
         <div class="btns">
           <button class="btn" id="how"><span class="face">Как это работает</span></button>
-          <button class="btn" id="upload"><span class="face">Загрузить изображение (1 TON)</span></button>
+          <button class="btn" id="upload">
+            <span class="face">
+              Загрузить изображение<br><span class="smallNote">(1 TON)</span>
+            </span>
+          </button>
           <button class="btn" id="invite"><span class="face">Пригласить друга</span></button>
         </div>
 
@@ -291,4 +295,5 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 650);
+
 
