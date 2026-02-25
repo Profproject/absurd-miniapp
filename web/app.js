@@ -59,10 +59,15 @@ function safeOpenTelegram(url) {
 function renderLoading() {
   app.innerHTML = `
     <div class="wrap">
-      <div class="card">
-        <div class="big">ЗАГРУЖАЕМ ГАЛЕРЕЮ АБСУРДА…</div>
-        <div class="sub">Загружай изображения — получай шанс на награду.</div>
-        <div class="sub2">Подробности — ниже.</div>
+      <div class="card isFrame">
+        <div class="big big3d">Галерея абсурда загружается, ожидайте пожалуйста</div>
+
+        <div class="loadBar3d">
+          <div class="loadTrack"></div>
+          <div class="loadBeam"></div>
+        </div>
+
+        <div class="mini3d">Подключаем неон…</div>
       </div>
     </div>
   `;
@@ -295,6 +300,7 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 650);
+
 
 
 
