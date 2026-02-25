@@ -1,6 +1,6 @@
 // ====== CONFIG (EDIT THESE 3) ======
 const API_BASE = "https://absurd-miniapp.onrender.com"; // <- твой backend
-const BOT_USERNAME = "YOUR_BOT_USERNAME";              // без @
+const BOT_USERNAME = "picabsurd_bot";              // без @
 const MINIAPP_SHORTNAME = "absurd";                    // short name mini app в BotFather
 // ===================================
 
@@ -291,3 +291,4 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 650);
+
