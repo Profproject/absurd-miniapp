@@ -60,6 +60,7 @@ function renderLoading() {
   app.innerHTML = `
     <div class="wrap">
       <div class="card isFrame">
+        <div class="innerGroove"></div>
         <div class="big big3d">Галерея абсурда загружается, ожидайте пожалуйста</div>
 
         <div class="loadBar3d">
@@ -85,7 +86,8 @@ function attachPressFX() {
 function renderHome() {
   app.innerHTML = `
     <div class="wrap">
-      <div class="card">
+      <div class="card isFrame">
+        <div class="innerGroove"></div>
         <div class="big big3d">Преврати свой безумный абсурд в TON</div>
 
         <div class="sub">
@@ -300,6 +302,7 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 3000);
+
 
 
 
