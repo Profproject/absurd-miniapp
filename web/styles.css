@@ -358,6 +358,12 @@ input {
   background: rgba(255,80,80,.08);
   text-align: left;
 }
-
+.smallNote{
+  display:inline-block;
+  margin-top: 6px;
+  font-size: 16px;
+  opacity: .92;
+}
 .row { margin-top: 16px; }
+
 
