@@ -99,20 +99,30 @@ body {
   margin: 6px 0 0;
 }
 
-.sub {
+.sub{
   margin-top: 12px;
+  font-family: "Rubik Rounded","Nunito",system-ui;
   font-weight: 900;
-  color: rgba(255,255,255,.82);
   font-size: 18px;
   line-height: 1.25;
+  color: var(--pText);
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.55),
+    0 10px 24px rgba(0,0,0,.55),
+    0 0 14px rgba(190,120,255,.20);
 }
 
-.sub2 {
+.sub2{
   margin-top: 10px;
+  font-family: "Rubik Rounded","Nunito",system-ui;
   font-weight: 900;
-  color: rgba(190,120,255,.88);
   font-size: 16px;
   line-height: 1.2;
+  color: rgba(120,255,120,.82);
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.55),
+    0 10px 24px rgba(0,0,0,.55),
+    0 0 14px rgba(120,255,120,.18);
 }
 
 .arrows {
@@ -446,6 +456,7 @@ input {
 @keyframes beamMove{
   to { left: 105%; }
 }
+
 
 
 
