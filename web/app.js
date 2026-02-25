@@ -117,13 +117,19 @@ function renderHome() {
     3 оплаты рефералов = 1 бесплатная загрузка
   </div>
 </div>
-          <div class="winner">
+          <div class="winnerShell">
             <div class="winnerTitle">Победитель недели</div>
-            <div class="winnerBox">?</div>
-            <div class="winnerHint">Каждое воскресенье мы выбираем 1 победителя и отправляем 100 TON на его кошелёк.</div>
+
+            <div class="winnerOuter">
+              <div class="winnerInner">
+                <div class="winnerBox">?</div>
+              </div>
+
+              <div class="winnerText">
+                Каждое воскресенье мы выбираем 1 победителя и отправляем 100 TON на его кошелёк.
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
     </div>
   `;
 
@@ -304,6 +310,7 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 3000);
+
 
 
 
