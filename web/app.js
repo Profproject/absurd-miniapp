@@ -87,7 +87,7 @@ function renderHome() {
           Подробности — ниже.
         </div>
 
-        <div class="arrows"><span>⬇</span><span>⬇</span><span>⬇</span></div>
+        <div class="arrows"><span>↓</span><span>↓</span><span>↓</span></div>
 
         <div class="btns">
           <button class="btn" id="how"><span class="face">Как это работает</span></button>
@@ -295,5 +295,6 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 650);
+
 
 
