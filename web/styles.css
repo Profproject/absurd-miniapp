@@ -120,8 +120,9 @@ body {
   display: flex;
   justify-content: center;
   gap: 14px;
-  font-size: 26px;
-  color: rgba(190,120,255,.92);
+  font-size: 30px;
+  color: rgba(120,255,120,.95); /* неон зелёный */
+  text-shadow: 0 0 18px rgba(120,255,120,.30);
 }
 .arrows span { animation: blink 1.2s infinite; }
 .arrows span:nth-child(2){ animation-delay:.15s }
@@ -365,5 +366,6 @@ input {
   opacity: .92;
 }
 .row { margin-top: 16px; }
+
 
 
