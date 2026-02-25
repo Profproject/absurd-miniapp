@@ -107,14 +107,16 @@ function renderHome() {
         </div>
 
         <div class="under">
-          <div class="free">
+          <div class="info3d">
+           <div>
             Бесплатные загрузки: ${state.freeUploads}
-            ${state.freeUploads > 0 ? `<a id="useFree">использовать 1 бесплатно</a>` : ``}
-            <div style="margin-top:8px;color:rgba(255,255,255,.72);font-weight:900">
-              3 оплаты рефералов = 1 бесплатная загрузка
-            </div>
+            ${state.freeUploads > 0 ? `<a id="useFree" class="useFreeLink">использовать 1 бесплатно</a>` : ``}
           </div>
 
+  <div class="refNote">
+    3 оплаты рефералов = 1 бесплатная загрузка
+  </div>
+</div>
           <div class="winner">
             <div class="winnerTitle">Победитель недели</div>
             <div class="winnerBox">?</div>
@@ -302,6 +304,7 @@ setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
 }, 3000);
+
 
 
 
