@@ -67,7 +67,7 @@ function renderLoading() {
           <div class="loadBeam"></div>
         </div>
 
-        <div class="mini3d">Подключаем неон…</div>
+        
       </div>
     </div>
   `;
@@ -299,7 +299,8 @@ renderLoading();
 setTimeout(async () => {
   try { await loadMe(); } catch {}
   renderHome();
-}, 650);
+}, 3000);
+
 
 
 
