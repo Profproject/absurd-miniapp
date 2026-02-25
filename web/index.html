@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Неадекватный конкурс</title>
+  <title>absurd</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Rounded&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div id="app"></div>
 
-  <audio id="bg" src="./audio/bg.mp3" loop></audio>
-  <audio id="click" src="./audio/click.mp3"></audio>
+  <!-- audio files must exist -->
+  <audio id="bg" src="./audio/bg.mp3" loop preload="auto"></audio>
+  <audio id="click" src="./audio/click.mp3" preload="auto"></audio>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="./app.js"></script>
