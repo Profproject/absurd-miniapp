@@ -78,15 +78,24 @@ body {
   font-family: "Rubik Rounded","Nunito",system-ui;
   font-weight: 900;
   letter-spacing: .6px;
-  font-size: 40px;
-  line-height: 1.05;
+
+  /* адаптивный размер, чтобы не резало на iPhone */
+  font-size: clamp(30px, 7.2vw, 42px);
+  line-height: 1.02;
+
   color: #8aff66;
+
+  /* чтобы не вылезало за край */
+  max-width: 100%;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 
   text-shadow:
     0 2px 0 rgba(0,0,0,.72),
     0 8px 0 rgba(0,0,0,.42),
     0 18px 38px rgba(0,0,0,.62),
     0 0 24px rgba(120,255,120,.26);
+
   margin: 6px 0 0;
 }
 
@@ -351,3 +360,4 @@ input {
 }
 
 .row { margin-top: 16px; }
+
